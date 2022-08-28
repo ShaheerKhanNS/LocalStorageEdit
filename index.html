@@ -1,0 +1,64 @@
+<html><head></head><body><form onsubmit="submitdetails(event)">
+    <label>UserName</label>
+<input id='username'type="text" name="username">
+<br>
+<br>
+<label>E-Mail</label>
+<input id="email" type="email" name="useremail">
+<br>
+<button>Submit</button>
+<ul id="list"></ul>
+
+
+
+</form>
+<script>
+      window.addEventListener("DOMContentLoaded", () => {
+                const localStorageObj = localStorage;
+                const localstoragekeys  = Object.keys(localStorageObj)
+
+                for(var i =0; i< localstoragekeys.length; i++){
+                    const key = localstoragekeys[i]
+                    const userDetailsString = localStorageObj[key];
+                    const userDetailsObj = JSON.parse(userDetailsString);
+                    showUserDetails(userDetailsObj)
+                }
+            })
+    function submitdetails(event){
+        event.preventDefault();
+        let myobj = {
+            username : event.target.username.value,
+            useremail:event.target.useremail.value
+        };
+let myobj_serialized = JSON.stringify(myobj);
+localStorage.setItem(myobj.useremail,myobj_serialized);
+showUserDetails(myobj);
+
+    };
+    function showUserDetails(user){
+        document.getElementById('username').value="";
+        document.getElementById('email').value="";
+        let parentNode = document.getElementById('list');
+        let childNode = `<li id=${user.useremail}> ${user.username} - ${user.useremail}
+            <button onclick=deleteUser('${user.useremail}')> Delete user</button>
+            <button onClick=editUser('${user.useremail}','${user.username}')>Edit </button></li>`;
+        parentNode.innerHTML = parentNode.innerHTML+childNode;
+    }
+
+    function deleteUser(email){
+        localStorage.removeItem(email);
+        removeItemFromScreen(email);
+    }
+    function removeItemFromScreen(email){
+        let parentNode = document.getElementById('list');
+        let childNode =document.getElementById(email);
+        parentNode.removeChild(childNode);
+    }
+    function editUser(email,name){
+        document.getElementById('username').value=name;
+        document.getElementById('email').value=email;
+        deleteUser(email);
+    }
+</script>
+
+</body></html>
